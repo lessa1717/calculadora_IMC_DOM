@@ -10,10 +10,10 @@
 //7.Renderizar o conteúdo no HTML
 //8.Botao de limpar os registros
 
-
+//funcao principal
 function calcularImc(event) {
     console.log(event);
-    event.preventDefault();
+    // event.preventDefault();(Náo deixa recarregar a tela)
 
 
     console.log("Funcionante!!!!");
@@ -82,7 +82,7 @@ function organizarDados(dadosUsuario, valorImc, classificacaoImc) {
     let dadosUsuarioAtualizado = {
         ...dadosUsuario,
         imc: valorImc,
-        clasificacao: classificacaoImc,
+        classificacao: classificacaoImc,
         dataCadastro: dataHoraAtual
     } 
     console.log(dadosUsuarioAtualizado);
@@ -94,16 +94,75 @@ function organizarDados(dadosUsuario, valorImc, classificacaoImc) {
 
 //Passo 5 .Salvar
 function cadastrarUsuario(usuario) {
-    let listaUsuario = [];
+    let listaUsuarios = [];
 
     if (localStorage.getItem("usuariosCadastrados"))  {
-    listaUsuario =  JSON.parse(localStorage.getItem("usuariosCadastrados"));
+    listaUsuarios =  JSON.parse(localStorage.getItem("usuariosCadastrados"));
     }
 
-    listaUsuario.push(usuario)
-    localStorage.setItem("usuariosCadastrados", JSON.stringify(listaUsuario))
+    listaUsuarios.push(usuario)
+    localStorage.setItem("usuariosCadastrados", JSON.stringify(listaUsuarios))
 
 }
+
+
+//Passo 6. Ler lista
+
+function carregarUsuarios() {
+    let listaUsuarios = [];
+
+    if (localStorage.getItem("usuariosCadastrados"))  {
+    listaUsuarios =  JSON.parse(localStorage.getItem("usuariosCadastrados"));
+    }
+
+    if(listaUsuarios.length == 0){
+        let tabela = document.getElementById("corpo-tabela");
+
+        tabela.innerHTML =   `<tr class="linha-mensagem">
+        <td colspan="6">Nenhum usuário cadastrado!</td>
+    </tr>`
+
+    }else{
+        montarTabela(listaUsuarios)
+    }
+
+}
+
+window.addEventListener('DOMContentLoaded', () => carregarUsuarios());
+
+//Passo 7. Montar a tablea
+    function montarTabela(listaDeCadastrados) {
+        let tabela = document.getElementById("corpo-tabela");
+
+        let template = '';
+        console.log(listaDeCadastrados);
+        listaDeCadastrados.forEach(pessoa =>{
+            template +=    
+            // <!-- Exemplo de Registro da tabela -->
+        `<tr>
+                <td data-cell="nome">${pessoa.nome}</td>
+                <td data-cell="altura">${pessoa.altura}</td>
+                <td data-cell="peso">${pessoa.peso}</td>
+                <td data-cell="valor do IMC">${pessoa.imc}</td>
+                <td data-cell="classificação do IMC">${pessoa.classificacao}</td>
+                <td data-cell="data de cadastro">${pessoa.dataCadastro}</td>
+            </tr>`
+
+
+        })
+
+        tabela.innerHTML = template;
+
+    }
+
+//Passo 8. Limpar local storage
+function deletarRegistros() {
+    localStorage.removeItem("usuariosCadastrados")
+    window.location.reload();
+}
+
+
+
 
 // alert(organizarDados)
 
